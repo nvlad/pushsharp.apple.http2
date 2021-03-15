@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>NVlad,redth,Neio</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>http://project_url_here_or_delete_this_line/</projectUrl>
+    <description>Send Apple Push notification using HTTP2 protocol. For PushSharp library.</description>
+    <copyright>$copyright$</copyright>
+    <tags>Apple Push APNS HTTP2</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5">
+        <dependency id="Newtonsoft.Json" version="7.0.1" />
+      </group>
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework=".NETFramework4.5">
+        <frameworkReference name="System" />
+        <frameworkReference name="System.Core" />
+        <frameworkReference name="mscorlib" />
+      </group>
+    </frameworkReferences>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework="net45" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="net45" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="lib\*.dll" target="ref" />
+    <file src="lib\hpack.dll" target="lib" />
+    <file src="lib\HttpTwo.dll" target="lib" />
+  </files>
+</package>

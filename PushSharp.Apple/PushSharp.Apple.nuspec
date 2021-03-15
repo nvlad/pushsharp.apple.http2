@@ -7,10 +7,10 @@
     <authors>NVlad,redth,Neio</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
-    <projectUrl>http://project_url_here_or_delete_this_line/</projectUrl>
+    <projectUrl>https://github.com/nvlad/pushsharp.apple.http2</projectUrl>
     <description>Send Apple Push notification using HTTP2 protocol. For PushSharp library.</description>
     <copyright>$copyright$</copyright>
-    <tags>Apple Push APNS HTTP2</tags>
+    <tags>Apple Push APNS HTTP2 PushSharp</tags>
     <dependencies>
       <group targetFramework=".NETFramework4.5">
         <dependency id="Newtonsoft.Json" version="7.0.1" />

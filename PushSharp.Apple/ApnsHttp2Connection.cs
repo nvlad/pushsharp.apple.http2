@@ -74,7 +74,7 @@ namespace PushSharp.Apple
 
             var payload = notification.Payload.ToString ();
 
-            var data = Encoding.ASCII.GetBytes (payload);
+            var data = Encoding.UTF8.GetBytes (payload);
 
             var headers = new NameValueCollection ();
             headers.Add ("apns-id", notification.Uuid); // UUID

@@ -14,32 +14,32 @@ namespace PushSharp.Apple
         const uint APNS_PRODUCTION_PORT = 443;
         #endregion
 
-        public ApnsHttp2Configuration (ApnsServerEnvironment serverEnvironment, string certificateFile, string certificateFilePwd)
-            : this (serverEnvironment, System.IO.File.ReadAllBytes (certificateFile), certificateFilePwd)
+        public ApnsHttp2Configuration(ApnsServerEnvironment serverEnvironment, string certificateFile, string certificateFilePwd, bool tryKeepingConnectionAlive)
+            : this(serverEnvironment, System.IO.File.ReadAllBytes(certificateFile), certificateFilePwd, tryKeepingConnectionAlive)
         {
         }
 
-        public ApnsHttp2Configuration (ApnsServerEnvironment serverEnvironment, byte[] certificateData, string certificateFilePwd)
-            : this (serverEnvironment, new X509Certificate2 (certificateData, certificateFilePwd,
-                X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable))
+        public ApnsHttp2Configuration(ApnsServerEnvironment serverEnvironment, byte[] certificateData, string certificateFilePwd, bool tryKeepingConnectionAlive)
+            : this(serverEnvironment, new X509Certificate2(certificateData, certificateFilePwd,
+                X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable), tryKeepingConnectionAlive)
         {
         }
 
-        public ApnsHttp2Configuration (string overrideHost, uint overridePort, bool skipSsl = true)
+        public ApnsHttp2Configuration(string overrideHost, uint overridePort, bool skipSsl = true, bool tryKeepingConnectionAlive = false)
         {
             SkipSsl = skipSsl;
 
-            Initialize (ApnsServerEnvironment.Sandbox, null);
+            Initialize(ApnsServerEnvironment.Sandbox, null, tryKeepingConnectionAlive);
 
-            OverrideServer (overrideHost, overridePort);
+            OverrideServer(overrideHost, overridePort);
         }
 
-        public ApnsHttp2Configuration (ApnsServerEnvironment serverEnvironment, X509Certificate2 certificate)
+        public ApnsHttp2Configuration(ApnsServerEnvironment serverEnvironment, X509Certificate2 certificate, bool tryKeepingConnectionAlive)
         {
-            Initialize (serverEnvironment, certificate);
+            Initialize(serverEnvironment, certificate, tryKeepingConnectionAlive);
         }
 
-        void Initialize (ApnsServerEnvironment serverEnvironment, X509Certificate2 certificate)
+        void Initialize(ApnsServerEnvironment serverEnvironment, X509Certificate2 certificate, bool tryKeepingConnectionAlive)
         {
             var production = serverEnvironment == ApnsServerEnvironment.Production;
 
@@ -55,40 +55,45 @@ namespace PushSharp.Apple
             FeedbackIntervalMinutes = 10;
             FeedbackTimeIsUTC = false;
 
-            AdditionalCertificates = new List<X509Certificate2> ();
+            AdditionalCertificates = new List<X509Certificate2>();
             AddLocalAndMachineCertificateStores = false;
 
-            CheckIsApnsCertificate ();
+            CheckIsApnsCertificate();
 
             ValidateServerCertificate = false;
 
-            KeepAlivePeriod = TimeSpan.FromMinutes (20);
-            KeepAliveRetryPeriod = TimeSpan.FromSeconds (30);
+            KeepAlivePeriod = TimeSpan.FromMinutes(20);
+            KeepAliveRetryPeriod = TimeSpan.FromSeconds(30);
 
             InternalBatchSize = 1000;
-            InternalBatchingWaitPeriod = TimeSpan.FromMilliseconds (750);
+            InternalBatchingWaitPeriod = TimeSpan.FromMilliseconds(750);
 
             InternalBatchFailureRetryCount = 1;
+
+            TryKeepingConnectionAlive = tryKeepingConnectionAlive;
         }
 
 
-        void CheckIsApnsCertificate ()
+        void CheckIsApnsCertificate()
         {
-            if (Certificate != null) {
+            if (Certificate != null)
+            {
                 var issuerName = Certificate.IssuerName.Name;
                 var commonName = Certificate.SubjectName.Name;
 
-                if (!issuerName.Contains ("Apple"))
-                    throw new ApnsConnectionException ("Your Certificate does not appear to be issued by Apple!  Please check to ensure you have the correct certificate!");
-                if (!commonName.Contains ("Apple Push Services:"))
-                    throw new ApnsConnectionException ("Your Certificate is not in the new combined Sandbox/Production APNS certificate format, please create a new single certificate to use");
+                if (!issuerName.Contains("Apple"))
+                    throw new ApnsConnectionException("Your Certificate does not appear to be issued by Apple!  Please check to ensure you have the correct certificate!");
+                if (!commonName.Contains("Apple Push Services:"))
+                    throw new ApnsConnectionException("Your Certificate is not in the new combined Sandbox/Production APNS certificate format, please create a new single certificate to use");
 
-            } else {
-                throw new ApnsConnectionException ("You must provide a Certificate to connect to APNS with!");
+            }
+            else
+            {
+                throw new ApnsConnectionException("You must provide a Certificate to connect to APNS with!");
             }
         }
 
-        public void OverrideServer (string host, uint port)
+        public void OverrideServer(string host, uint port)
         {
             Host = host;
             Port = port;
@@ -148,7 +153,14 @@ namespace PushSharp.Apple
         /// </summary>
         public TimeSpan KeepAliveRetryPeriod { get; set; }
 
-        public enum ApnsServerEnvironment {
+        /// <summary>
+        /// Gets or sets the try keeping connection alive so the system executes a ping from time to time.
+        /// (only set it to TRUE if implementation reuses the same service broker for hours or days)
+        /// </summary>
+        public bool TryKeepingConnectionAlive { get; set; }
+
+        public enum ApnsServerEnvironment
+        {
             Sandbox,
             Production
         }

@@ -22,8 +22,19 @@ namespace PushSharp.Apple
 
     public class ApnsHttp2ServiceBroker : ServiceBroker<ApnsHttp2Notification>
     {
+        public ApnsHttp2Configuration Configuration { get; private set; }
+
         public ApnsHttp2ServiceBroker (ApnsHttp2Configuration configuration) : base (new ApnsHttp2ServiceConnectionFactory (configuration))
         {
+            Configuration = configuration;
+        }
+
+        public new void Stop(bool immediately = false)
+        {
+            // MANDATORY -> needed to stop and dispose keep alive timer
+            Configuration.TryKeepingConnectionAlive = false;
+
+            base.Stop (immediately);
         }
     }
 

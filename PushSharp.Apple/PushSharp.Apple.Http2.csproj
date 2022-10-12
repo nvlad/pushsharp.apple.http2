@@ -37,7 +37,7 @@
       <HintPath>lib\HttpTwo.dll</HintPath>
     </Reference>
     <Reference Include="PushSharp.Core, Version=4.0.10.0, Culture=neutral, PublicKeyToken=cf74b75eab2c0170">
-      <HintPath>lib\ref\PushSharp.Core.dll</HintPath>
+      <HintPath>lib\PushSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="Newtonsoft.Json">
